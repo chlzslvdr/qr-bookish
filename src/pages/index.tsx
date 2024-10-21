@@ -25,7 +25,7 @@ const Home = () => {
           author: book.volumeInfo.authors?.join(", ") || "N/A",
           publisher: book.volumeInfo.publisher || "N/A",
         };
-
+        console.log(bookDetails);
         // Create a URL for the QR code that points to the book details page
         const bookUrl = `${window.location.origin}/book/${bookId}`;
 
