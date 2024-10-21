@@ -10,18 +10,15 @@ interface BookInfo {
 
 const BookDetails = () => {
   const router = useRouter();
-  const { id } = router.query; // Get the book ID from the query
-  const [book, setBook] = useState<BookInfo | null>(null); // Use the BookInfo type for state
+  const { id } = router.query;
+  const [book, setBook] = useState<BookInfo | null>(null);
 
   useEffect(() => {
     if (id) {
       const fetchBookDetails = async () => {
         try {
-          const response = await axios.get(
-            `https://www.googleapis.com/books/v1/volumes/${id}?key=${process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY}`
-          );
-
-          setBook(response.data.volumeInfo);
+          const response = await axios.get(`/api/bookDetails?id=${id}`);
+          setBook(response.data);
         } catch (error) {
           console.error("Error fetching book details:", error);
         }

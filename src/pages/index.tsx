@@ -10,26 +10,11 @@ const Home = () => {
   const fetchBookInfo = async () => {
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-          query
-        )}&key=${process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY}`
+        `/api/fetchBookInfo?query=${encodeURIComponent(query)}`
       );
 
-      console.log(response.data);
-
-      if (response.data.items && response.data.items.length > 0) {
-        const book = response.data.items[0];
-        const bookId = book.id; // Get the book ID
-        const bookDetails = {
-          title: book.volumeInfo.title,
-          author: book.volumeInfo.authors?.join(", ") || "N/A",
-          publisher: book.volumeInfo.publisher || "N/A",
-        };
-        console.log(bookDetails);
-        // Create a URL for the QR code that points to the book details page
-        const bookUrl = `${window.location.origin}/book/${bookId}`;
-
-        // Set the QR code value to the book URL
+      if (response.status === 200) {
+        const { bookUrl } = response.data;
         setBookInfo(bookUrl);
         setError("");
       } else {
@@ -41,7 +26,6 @@ const Home = () => {
       setBookInfo("");
     }
   };
-
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
