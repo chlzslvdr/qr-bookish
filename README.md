@@ -1,6 +1,6 @@
 # qr-bookish
 
-A sample project for generating QR code using [NextJS](https://nextjs.org).
+A sample project for generating QR code using [NextJS](https://nextjs.org) and [AntD QR Code](https://ant.design/components/qr-code).
 
 ## Installation
 
