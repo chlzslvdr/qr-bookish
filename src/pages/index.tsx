@@ -6,8 +6,10 @@ import QRCode from "antd/lib/qr-code";
 import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import message from "antd/lib/message";
+import html2canvas from "html2canvas";
 
 interface BookInfo {
+  id: string;
   title: string;
   author: string;
   publisher?: string;
@@ -15,7 +17,7 @@ interface BookInfo {
 
 const Home = () => {
   const [query, setQuery] = useState("");
-  const [bookInfo, setBookInfo] = useState<BookInfo>();
+  const [bookDetails, setBookDetails] = useState<BookInfo>();
   const [bookUrl, setBookUrl] = useState("");
   const [error, setError] = useState("");
 
@@ -27,7 +29,7 @@ const Home = () => {
 
       if (response.status === 200) {
         const { bookUrl, bookDetails } = response.data;
-        setBookInfo(bookDetails);
+        setBookDetails(bookDetails);
         setBookUrl(bookUrl);
         setError("");
       } else {
@@ -40,16 +42,23 @@ const Home = () => {
     }
   };
 
-  const downloadQRCode = () => {
-    const canvas = document.querySelector("canvas");
-    if (canvas) {
-      const imageURL = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = imageURL;
-      link.download = "bookish-qr-code.png";
-      link.click();
+  const downloadQRCode = async () => {
+    const qrCodeElement = document.querySelector("#qr-code-container");
+
+    if (qrCodeElement) {
+      try {
+        const canvas = await html2canvas(qrCodeElement);
+        const imageURL = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.href = imageURL;
+        link.download = `bookish-qr-code-${bookDetails?.id}.png`;
+        link.click();
+      } catch (error) {
+        console.error("Failed to download QR code image:", error);
+        message.error("Failed to download the QR code.");
+      }
     } else {
-      message.error("Failed to download the QR code.");
+      message.error("QR code element not found.");
     }
   };
 
@@ -90,7 +99,7 @@ const Home = () => {
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {bookInfo && bookUrl && (
+      {bookDetails && bookUrl && (
         <div
           style={{
             marginTop: "20px",
@@ -100,21 +109,27 @@ const Home = () => {
           }}
         >
           <h2>QR Code for Book Information</h2>
-          <QRCode
-            value={bookUrl}
-            size={256}
-            icon="https://chlzslvdr.sirv.com/bookish/bookish.png"
-          />
+
+          <div
+            id="qr-code-container"
+            style={{ position: "relative", display: "inline-block" }}
+          >
+            <QRCode
+              value={bookUrl}
+              size={256}
+              icon="https://chlzslvdr.sirv.com/bookish/bookish.png"
+            />
+          </div>
 
           <div style={{ marginTop: "10px", textAlign: "left" }}>
             <p>
-              <strong>Title:</strong> {bookInfo.title}
+              <strong>Title:</strong> {bookDetails.title}
             </p>
             <p>
-              <strong>Author:</strong> {bookInfo.author}
+              <strong>Author:</strong> {bookDetails.author}
             </p>
             <p>
-              <strong>Publisher:</strong> {bookInfo.publisher}
+              <strong>Publisher:</strong> {bookDetails.publisher}
             </p>
           </div>
 
@@ -147,7 +162,12 @@ const Home = () => {
             <img
               src="https://chlzslvdr.sirv.com/bookish/download.png"
               alt="Download"
-              style={{ marginRight: "5px", width: "16px", height: "16px", filter: "invert(100%)" }} 
+              style={{
+                marginRight: "5px",
+                width: "16px",
+                height: "16px",
+                filter: "invert(100%)",
+              }}
             />
             Download QR Code
           </Button>

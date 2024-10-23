@@ -19,6 +19,7 @@ const fetchBookInfo = async (req: NextApiRequest, res: NextApiResponse) => {
       const book = response.data.items[0];
       const bookId = book.id;
       const bookDetails = {
+        id: bookId,
         title: book.volumeInfo.title,
         author: book.volumeInfo.authors?.join(", ") || "N/A",
         publisher: book.volumeInfo.publisher || "N/A",
