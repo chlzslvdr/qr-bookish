@@ -43,7 +43,9 @@ const Home = () => {
   };
 
   const downloadQRCode = async () => {
-    const qrCodeElement = document.querySelector("#qr-code-container");
+    const qrCodeElement = document.querySelector(
+      "#qr-code-container"
+    ) as HTMLElement;
 
     if (qrCodeElement) {
       try {
